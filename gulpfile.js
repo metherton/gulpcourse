@@ -28,18 +28,18 @@ gulp.task('styles', ['clean-styles'], function() {
         .pipe(gulp.dest(config.temp));
 });
 
-gulp.task('clean-styles', function(done) {
+gulp.task('clean-styles', function() {
     var files = config.temp + '**/*.css';
-    clean(files, done);
+    clean(files);
 });
 
 gulp.task('less-watcher', function() {
     gulp.watch([config.less], ['styles']);
 });
 ///////////////////////
-function clean(path, done) {
+function clean(path) {
     log('Cleaning ' + $.util.colors.blue(path));
-    del(path, done);
+    del(path);
 }
 
 function log(msg) {
