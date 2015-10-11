@@ -69,7 +69,22 @@ gulp.task('serve-dev', ['inject'], function() {
         watch: [config.server]
     };
 
-    return $.nodemon(nodeOptions);
+    return $.nodemon(nodeOptions)
+        .on('restart', function(ev) {
+            log('********* nodemon restarted ************');
+            log('files changed on restart\n' + ev);
+        })
+        .on('start', function(ev) {
+            log('********* nodemon started ************');
+        })
+        .on('crash', function(ev) {
+            log('********* nodemon crash ************');
+        })
+        .on('exit', function(ev) {
+            log('********* nodemon exit ************');
+        });
+
+
 });
 
 ///////////////////////
