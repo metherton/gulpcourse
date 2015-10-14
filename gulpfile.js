@@ -100,11 +100,27 @@ gulp.task('wiredep', function() {
         .pipe(gulp.dest(config.client));
 });
 
-gulp.task('inject', ['wiredep', 'styles'], function() {
+gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function() {
     log('Wire up the app css js into the html and call wiredep')
     return gulp.src(config.index)
         .pipe($.inject(gulp.src(config.css)))
         .pipe(gulp.dest(config.client));
+});
+
+gulp.task('optimize', ['inject'], function() {
+    log('Optimizing the javascript, css, html');
+
+    var templateCache = config.temp + config.templateCache.file;
+    var assets = $.useref.assets({searchPath: './'});
+
+    return gulp.src(config.index)
+        .pipe($.plumber())
+        .pipe($.inject(gulp.src(templateCache, {read: false}), {starttag: '<!-- inject:templates.js -->'}))
+        .pipe(assets)
+        .pipe(assets.restore())
+        .pipe($.useref())
+        .pipe(gulp.dest(config.build));
+
 });
 
 gulp.task('serve-dev', ['inject'], function() {
