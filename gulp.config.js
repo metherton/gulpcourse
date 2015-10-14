@@ -14,8 +14,12 @@ module.exports = function() {
             './*.js'],
 
         index: client + 'index.html',
+        build: './build/',
         client: client,
         css: temp + 'styles.css',
+        fonts: './bower_components/font-awesome/fonts/**/*.*',
+        htmltemplates: clientApp + '**/*.html',
+        images: client + 'images/**/*.*',
         js: [
             clientApp + '**/*.module.js',
             clientApp + '**/*.js',
@@ -24,6 +28,16 @@ module.exports = function() {
         less: client + 'styles/styles.less',
         server: server,
         temp: temp,
+
+        templateCache: {
+            file: 'templates.js',
+            options: {
+                module: 'app.core',
+                standAlone: false,
+                root: 'app/'
+            }
+        },
+
         browserReloadDelay: 1000,
         bower: {
             json: require('./bower.json'),
@@ -42,7 +56,7 @@ module.exports = function() {
             ignorePath: config.bower.ignorePath
         };
         return options;
-    }
+    };
 
     return config;
 };

@@ -8,6 +8,10 @@ var $ = require('gulp-load-plugins')({lazy: true});
 
 var port = process.env.PORT || config.defaultPort;
 
+gulp.task('help', $.taskListing);
+
+gulp.task('default', ['help']);
+
 gulp.task('vet', function() {
 
     log('analyzing source with jshint and jscs');
@@ -31,13 +35,59 @@ gulp.task('styles', ['clean-styles'], function() {
         .pipe(gulp.dest(config.temp));
 });
 
+gulp.task('fonts', ['clean-fonts'], function() {
+    log('Copying our fonts');
+    return gulp.src(config.fonts)
+        .pipe(gulp.dest(config.build + 'fonts'));
+});
+
+gulp.task('images', ['clean-images'], function() {
+    log('Copying and compressing the images');
+    return gulp.src(config.images)
+        .pipe($.imagemin({optimizationLevel: 4}))
+        .pipe(gulp.dest(config.build + 'images'));
+});
+
+gulp.task('clean', function() {
+    var delconfig = [].concat(config.build, config.temp);
+    log('Cleaning: ' + $.util.colors.blue(delconfig));
+    del(delconfig);
+});
+
+
 gulp.task('clean-styles', function() {
     var files = config.temp + '**/*.css';
     clean(files);
 });
 
+gulp.task('clean-code', function() {
+    var files = [].concat(
+        config.temp + '**/*.js',
+        config.build + '**/*.html',
+        config.build + 'js/**/*.js'
+    );
+    clean(files);
+});
+
+gulp.task('clean-fonts', function() {
+    clean(config.build + 'fonts/**/*.*');
+});
+
+gulp.task('clean-images', function() {
+    clean(config.build + 'images/**/*.*');
+});
+
 gulp.task('less-watcher', function() {
     gulp.watch([config.less], ['styles']);
+});
+
+gulp.task('templatecache', ['clean-code'], function() {
+    log('Create angular template cache');
+    return gulp.src(config.htmltemplates) // TODO:
+        //TODO minify
+        .pipe($.minifyHtml({empty: true}))
+        .pipe($.angularTemplatecache(config.templateCache.file, config.templateCache.options))
+            .pipe(gulp.dest(config.temp));
 });
 
 gulp.task('wiredep', function() {
