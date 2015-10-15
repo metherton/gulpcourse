@@ -10,6 +10,8 @@
     function Shell($timeout, config, logger) {
         var vm = this;
 
+        console.log('Shell');
+
         vm.title = config.appTitle;
         vm.busyMessage = 'Please wait ...';
         vm.isBusy = true;

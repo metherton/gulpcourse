@@ -1,9 +1,13 @@
 (function() {
     'use strict';
 
+    console.log('loading core');
+
     var core = angular.module('app.core');
 
     core.config(toastrConfig);
+
+    console.log('loading core1');
 
     toastrConfig.$inject = ['toastr'];
     /* @ngInject */
@@ -19,9 +23,13 @@
         unknownPersonImageSource: 'unknown_person.jpg'
     };
 
+    console.log('loading core 2');
+
     core.value('config', config);
 
     core.config(configure);
+
+    console.log('loading core 3');
 
     configure.$inject = ['$compileProvider', '$logProvider',
                          'routerHelperProvider', 'exceptionHandlerProvider'];
@@ -39,6 +47,8 @@
 
         ////////////////
 
+        console.log('loading core 4');
+
         function configureStateHelper() {
             var resolveAlways = {
                 ready: ready
@@ -49,7 +59,7 @@
             function ready(dataservice) {
                 return dataservice.ready();
             }
-
+            console.log('loading core 5');
             routerHelperProvider.configure({
                 docTitle: 'Gulp: ',
                 resolveAlways: resolveAlways

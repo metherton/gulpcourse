@@ -8,6 +8,7 @@
     appRun.$inject = ['routerHelper'];
     /* @ngInject */
     function appRun(routerHelper) {
+        console.log('runa pp');
         routerHelper.configureStates(getStates(), '/');
     }
 

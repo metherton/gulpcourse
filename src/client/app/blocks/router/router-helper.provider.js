@@ -25,6 +25,9 @@
         RouterHelper.$inject = ['$location', '$rootScope', '$state', 'logger'];
         /* @ngInject */
         function RouterHelper($location, $rootScope, $state, logger) {
+
+            console.log('routerhelpe');
+
             var handlingStateChangeError = false;
             var hasOtherwise = false;
             var stateCounts = {
@@ -54,6 +57,7 @@
                     hasOtherwise = true;
                     $urlRouterProvider.otherwise(otherwisePath);
                 }
+                console.log('configurestatues');
             }
 
             function handleRoutingErrors() {
@@ -62,6 +66,7 @@
                 // Provide an exit clause if it tries to do it twice.
                 $rootScope.$on('$stateChangeError',
                     function(event, toState, toParams, fromState, fromParams, error) {
+
                         if (handlingStateChangeError) {
                             return;
                         }
