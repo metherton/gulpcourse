@@ -3,6 +3,7 @@ module.exports = function() {
     var client = './src/client/';
     var server = './src/server/';
     var clientApp = client +  'app/';
+    var root = './';
     var temp = './.tmp/';
     // all js to vet
     var config = {
@@ -27,8 +28,14 @@ module.exports = function() {
             '!' + clientApp + '**/*.spec.js'
         ],
         less: client + 'styles/styles.less',
+        root: root,
         server: server,
         temp: temp,
+
+        optimized: {
+            app: 'app.js',
+            lib: 'lib.js'
+        },
 
         templateCache: {
             file: 'templates.js',
@@ -45,6 +52,11 @@ module.exports = function() {
             directory: './bower_components/',
             ignorePath: '../..'
         },
+
+        packages: [
+            './package.json',
+            './bower.json'
+        ],
 
         defaultPort: 7203,
         nodeServer: './src/server/app.js'

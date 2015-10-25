@@ -113,8 +113,8 @@ gulp.task('optimize', ['inject'], function() {
     var templateCache = config.temp + config.templateCache.file;
     var assets = $.useref.assets({searchPath: './'});
     var cssFilter = $.filter('**/*.css', {restore: true});
-    var jsLibFilter = $.filter('**/lib.js', {restore: true});
-    var jsAppFilter = $.filter('**/app.js', {restore: true});
+    var jsLibFilter = $.filter('**/' + config.optimized.lib, {restore: true});
+    var jsAppFilter = $.filter('**/' + config.optimized.app, {restore: true});
 
     return gulp.src(config.index)
         .pipe($.plumber())
@@ -130,10 +130,43 @@ gulp.task('optimize', ['inject'], function() {
         .pipe($.ngAnnotate())
         .pipe($.uglify())
         .pipe(jsAppFilter.restore)
+        .pipe($.rev())// app.js -> app.oiu2342.js
         .pipe(assets.restore())
         .pipe($.useref())
+        .pipe($.revReplace())
+        .pipe(gulp.dest(config.build))
+        .pipe($.rev.manifest())
         .pipe(gulp.dest(config.build));
 
+});
+
+/**
+ * Bump the version
+ * type=pre bumps prerelease version
+ * type=patch or no flag will bump version
+ * type=minor bump minor version
+ * type=major ump major version
+ * --version=1.2.3 bump to a specific version and ignore other flags
+**/
+gulp.task('bump', function() {
+
+    var msg = 'Bumping versions';
+    var type = args.type;
+    var version = args.version;
+    var options = {};
+    if (version) {
+        options.version = version;
+        msg += ' tp ' + version;
+    } else {
+        options.type = type;
+        msg += ' for a ' + type;
+    }
+    log(msg);
+    return gulp
+        .src(config.packages)
+        .pipe($.print())
+        .pipe($.bump(options))
+        .pipe(gulp.dest(config.root));
 });
 
 gulp.task('serve-build', ['optimize'], function() {
@@ -147,6 +180,8 @@ gulp.task('serve-dev', ['inject'], function() {
 
 });
 
+
+gulp.task('test')
 ///////////////////////
 
 function serve(isDev) {
