@@ -181,7 +181,9 @@ gulp.task('serve-dev', ['inject'], function() {
 });
 
 
-gulp.task('test')
+gulp.task('test', 'vet', function() {
+
+});
 ///////////////////////
 
 function serve(isDev) {
