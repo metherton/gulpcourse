@@ -91,7 +91,7 @@ gulp.task('templatecache', ['clean-code'], function() {
 });
 
 gulp.task('wiredep', function() {
-    log('Wire up the bower css js and our app js into the html')
+    log('Wire up the bower css js and our app js into the html');
     var options = config.getWiredepDefaultOptions();
     var wiredep = require('wiredep').stream;
     return gulp.src(config.index)
@@ -101,7 +101,7 @@ gulp.task('wiredep', function() {
 });
 
 gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function() {
-    log('Wire up the app css js into the html and call wiredep')
+    log('Wire up the app css js into the html and call wiredep');
     return gulp.src(config.index)
         .pipe($.inject(gulp.src(config.css)))
         .pipe(gulp.dest(config.client));
@@ -181,8 +181,8 @@ gulp.task('serve-dev', ['inject'], function() {
 });
 
 
-gulp.task('test', 'vet', function() {
-
+gulp.task('test', ['vet', 'templatecache'], function(done) {
+    startTests(true /* singleRun */, done);
 });
 ///////////////////////
 
@@ -209,7 +209,7 @@ function serve(isDev) {
         })
         .on('start', function(ev) {
             log('********* nodemon started ************');
-            startBrowserSync(isDev)
+            startBrowserSync(isDev);
         })
         .on('crash', function(ev) {
             log('********* nodemon crash ************');
@@ -269,6 +269,28 @@ function startBrowserSync(isDev) {
     browserSync(options);
 }
 
+function startTests(singleRun, done) {
+    var karma = require('karma').server;
+    var excludeFiles = [];
+    var serverSpecs = config.serverIntegrationSpecs;
+
+    excludeFiles = serverSpecs;
+
+    karma.start({
+        config: __dirname + '/karma.conf.js',
+        exclude: excludeFiles,
+        singleRun: !!singleRun
+    }, karmaCompleted);
+
+    function karmaCompleted(karmaResult) {
+        log('Karma completed');
+        if (karmaResult === 1) {
+            done('karma: tests failed with code ' + karmaResult);
+        } else {
+            done();
+        }
+    }
+}
 
 function clean(path) {
     log('Cleaning ' + $.util.colors.blue(path));

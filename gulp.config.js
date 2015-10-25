@@ -3,8 +3,12 @@ module.exports = function() {
     var client = './src/client/';
     var server = './src/server/';
     var clientApp = client +  'app/';
+    var report = './report/';
     var root = './';
     var temp = './.tmp/';
+    var wiredep = require('wiredep');
+    var bowerFiles = wiredep({devDependencies: true})['js'];
+
     // all js to vet
     var config = {
         /**
@@ -28,6 +32,7 @@ module.exports = function() {
             '!' + clientApp + '**/*.spec.js'
         ],
         less: client + 'styles/styles.less',
+        report: report,
         root: root,
         server: server,
         temp: temp,
@@ -58,6 +63,12 @@ module.exports = function() {
             './bower.json'
         ],
 
+        /**
+         * karma and testing settings
+         */
+        specHelpers: [client + 'test-helpers/*.js'],
+        serverIntegrationSpecs: [client + 'tests/server-integration/**/*.spec.js'],
+
         defaultPort: 7203,
         nodeServer: './src/server/app.js'
     };
@@ -71,5 +82,35 @@ module.exports = function() {
         return options;
     };
 
+    config.karma = getKarmaOptions();
+
     return config;
+
+    ////////////////////////////
+
+    function getKarmaOptions() {
+        var options = {
+            files: [].concat(
+                bowerFiles,
+                config.specHelpers,
+                client + '**/*.module.js',
+                client + '**/*.js',
+                temp + config.templateCache.file,
+                config.serverIntegrationSpecs
+            ),
+            exclude: [],
+            coverage: {
+                dir: report + 'coverage',
+                reporters: [
+                    {type: 'html', subdir: 'report-html'},
+                    {type: 'lcov', subdir: 'report-lcov'},
+                    {type: 'text-summary'}
+                ]
+            },
+            preprocessors: {}
+        };
+        options.preprocessors[clientApp + '**/!(*.spec)+(.js)'] = ['coverage'];
+        return options;
+    }
+
 };
