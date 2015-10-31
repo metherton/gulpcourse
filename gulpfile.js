@@ -107,7 +107,19 @@ gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function() {
         .pipe(gulp.dest(config.client));
 });
 
-gulp.task('optimize', ['inject'], function() {
+gulp.task('build', ['optimize', 'images', 'fonts'], function() {
+    log('Building everything');
+    var msg = {
+        title: 'gulp build',
+        subtitle: 'Deploying to the build folder',
+        message: 'Running gulp serve-build'
+    };
+    del(config.temp);
+    log(msg);
+    notify(msg);
+});
+
+gulp.task('optimize', ['inject','test'], function() {
     log('Optimizing the javascript, css, html');
 
     var templateCache = config.temp + config.templateCache.file;
@@ -307,5 +319,18 @@ function log(msg) {
     } else {
         $.util.log($.util.colors.blue(msg));
     }
+
+}
+
+function notify(options) {
+
+    var notifier = require('node-notifier');
+    var notifyOptions = {
+        sound: 'Bottle',
+        contentImage: path.join(__dirname, 'gulp.png')
+        icon: path.join(__dirname, 'gulp.png')
+    };
+    _.assign(notifyOptions.options);
+    notifier.notify(notifyOptions);
 
 }
