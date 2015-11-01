@@ -3,6 +3,8 @@ var args = require('yargs').argv;
 var browserSync = require('browser-sync');
 var config = require('./gulp.config.js')();
 var del = require('del');
+var path = require('path');
+var _ = require('lodash');
 
 var $ = require('gulp-load-plugins')({lazy: true});
 
@@ -181,7 +183,7 @@ gulp.task('bump', function() {
         .pipe(gulp.dest(config.root));
 });
 
-gulp.task('serve-build', ['optimize'], function() {
+gulp.task('serve-build', ['build'], function() {
     serve(false);
 });
 
@@ -196,6 +198,11 @@ gulp.task('serve-dev', ['inject'], function() {
 gulp.task('test', ['vet', 'templatecache'], function(done) {
     startTests(true /* singleRun */, done);
 });
+
+gulp.task('autotest', ['vet', 'templatecache'], function(done) {
+    startTests(false /* singleRun */, done);
+});
+
 ///////////////////////
 
 function serve(isDev) {
@@ -327,7 +334,7 @@ function notify(options) {
     var notifier = require('node-notifier');
     var notifyOptions = {
         sound: 'Bottle',
-        contentImage: path.join(__dirname, 'gulp.png')
+        contentImage: path.join(__dirname, 'gulp.png'),
         icon: path.join(__dirname, 'gulp.png')
     };
     _.assign(notifyOptions.options);
